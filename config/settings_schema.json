@@ -1,11 +1,11 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Portfolio Theme (Dawn Fork)",
-    "theme_version": "1.0.0",
-    "theme_author": "Portfolio Developer",
-    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
-    "theme_support_url": "https://support.shopify.com/"
+    "theme_name": "Auto Shop Theme",
+    "theme_version": "1.1.0",
+    "theme_author": "Jack Murphy",
+    "theme_documentation_url": "https://autostudio.nyc/",
+    "theme_support_url": "https://autostudio.nyc/"
   },
   {
     "name": "t:settings_schema.logo.name",

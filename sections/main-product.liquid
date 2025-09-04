@@ -49,25 +49,6 @@
     <script src="{{ 'theme-editor.js' | asset_url }}" defer="defer"></script>
   {%- endif -%}
 
-  {%- assign first_3d_model = product.media | where: 'media_type', 'model' | first -%}
-  {%- if first_3d_model -%}
-    {{ 'component-product-model.css' | asset_url | stylesheet_tag }}
-    <link
-      id="ModelViewerStyle"
-      rel="stylesheet"
-      href="https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css"
-      media="print"
-      onload="this.media='all'"
-    >
-    <link
-      id="ModelViewerOverride"
-      rel="stylesheet"
-      href="{{ 'component-model-viewer-ui.css' | asset_url }}"
-      media="print"
-      onload="this.media='all'"
-    >
-  {%- endif -%}
-
   {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
   <div class="page-width product__page-wrapper" id="main-product">
     <div class>
@@ -467,74 +448,13 @@
 
                   {%- when 'variant_picker' -%}
                       <ul class="swatch-list">
-                        {% comment %}
-                        model s: OIL, CONVERTIBLE, GASOLINE, SLATE
-                        model-s3-6-in-tar
-                        model-s2-8
-                        model-s3-6-in-gasoline
-                        model-s-in-slate
-                        {% endcomment %}
-                        {% assign current_product = product %}
-                        {% assign ordered_products = collections.all.products | sort: 'handle' %}
-                        {% assign model_s_order = 'model-s-oil,model-s-convertible,model-s-gasoline,model-s-chalk' | split: ',' %}
-                        {% assign model_s_products = collections.all.products | where: 'type', 'model_s' %}
-
-                        {% for handle in model_s_order %}
-                          {% assign product_loop = model_s_products | where: 'handle', handle | first %}
-                          {% if product_loop %}
-                            {% if product_loop.type == product.type %}
-                              <li>{% render 'product-variant-picker', product: product_loop, block: block, product_form_id: product_form_id %}</li>
-                            {% endif %}
-                          {% endif %}
-                        {% endfor %}
-
-                        {% for product_loop in ordered_products %}
-                          {% if product_loop.type == product.type and product_loop.type != 'model_s' %}
-                            <li>{% render 'product-variant-picker', product: product_loop, block: block, product_form_id: product_form_id %}</li>
-                          {% endif %}
-                        {% endfor %}
+                        
                         
 
                       </ul>
                         <script>
                           // Create an empty object to store media URLs for variants
                           const variantMedia = {};
-
-                          // Iterate through the model_s_order list
-                          {% for handle in model_s_order %}
-                            {% assign product_loop = model_s_products | where: 'handle', handle | first %}
-                            {% if product_loop %}
-                              // If this product has media, add it to the variantMedia object
-                              {% for variant in product_loop.variants %}
-                                {% assign variantId = product_loop.id %}
-                                variantMedia["{{ variantId }}"] = [];  // Use stringified variantId
-
-                                {% for media in product_loop.media %}
-                                  {% if media.media_type == 'image' %}
-                                    // Add each media image URL to the variant's array
-                                    variantMedia["{{ variantId }}"].push("{{ media.image | image_url: width: 2000 }}");
-                                  {% endif %}
-                                {% endfor %}
-                              {% endfor %}
-                            {% endif %}
-                          {% endfor %}
-
-                          // Iterate through other products and add their media URLs
-                          {% for product_loop in ordered_products %}
-                            {% if product_loop.type == product.type and product_loop.type != 'model_s' %}
-                              {% for variant in product_loop.variants %}
-                                {% assign variantId = product_loop.id %}
-                                variantMedia["{{ variantId }}"] = [];  // Use stringified variantId
-
-                                {% for media in product_loop.media %}
-                                  {% if media.media_type == 'image' %}
-                                    // Add each media image URL to the variant's array
-                                    variantMedia["{{ variantId }}"].push("{{ media.preview_image | img_url: 'large' }}");
-                                  {% endif %}
-                                {% endfor %}
-                              {% endfor %}
-                            {% endif %}
-                          {% endfor %}
 
                           document.addEventListener('DOMContentLoaded', function () {
                             const swatchLinks = document.querySelectorAll('.swatch-input__label');
@@ -861,15 +781,6 @@ document.addEventListener('DOMContentLoaded', function () {
       
       // Retrieve the product type directly from the Liquid template and store it
       productType = '{{ product.type }}';  // Liquid code injected into the JS
-      if (productType === 'model_s') {       
-        window._klOnsite = window._klOnsite || [];
-        window._klOnsite.push(['openForm', 'Y59nZD']);
-      } else if (productType === 'model_c') {
-        window._klOnsite = window._klOnsite || [];
-        window._klOnsite.push(['openForm', 'VkNFWc']);
-      }
-
-
       // overlay.style.display = 'flex';..
     });
   });
@@ -886,7 +797,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   const form = document.getElementById('back-in-stock-form');
-  form.addEventListener('submit', function (event) {
+  form.addEventListener('submit', function (event) 
     event.preventDefault();
 
     const email = document.getElementById('back-in-stock-email').value.trim();
@@ -897,12 +808,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Determine the listId based on the product type
-    let listId = 'YOUR_DEFAULT_LIST_ID'; // Default list (for products)
-    if (productType === 'model_s') {
-      listId = 'YOUR_MODEL_S_LIST_ID';
-    } else if (productType === 'model_c') {
-      listId = 'YOUR_MODEL_C_LIST_ID';
-    }
+    let listId = 'YOUR_DEFAULT_LIST_ID';
 
     // Prepare the email service data
     const apiKey = 'YOUR_PUBLIC_API_KEY'; // Public API Key
@@ -976,7 +882,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('back-in-stock-email').setCustomValidity('Network error. Please try again later.');
         overlay.style.display = 'none';
       });
-  });
+  );
 });
 
 </script>
