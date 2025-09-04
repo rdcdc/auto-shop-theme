@@ -16,7 +16,7 @@ A modern, performance-optimized Shopify theme originally developed for [Auto Stu
 - **Smart Image Prefetching**: Uses Intersection Observer API (`assets/global.js:670`) to preload images as they approach the viewport
 - **Responsive Media Galleries**: Custom `media-gallery` web component (`assets/media-gallery.js`) with thumbnail navigation
 
-### ⚡ Performance Optimizations
+### Performance Optimizations
 - **Strategic Image Prefetching**: Multi-level prefetching system for optimal performance
 - **Collection-Level Prefetching**: Hover over collection links triggers preloading of all product images in that collection
 - **Variant Swatch Prefetching**: Product variant images are prefetched on swatch hover
