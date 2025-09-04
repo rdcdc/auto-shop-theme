@@ -1,0 +1,114 @@
+{{ 'grid-8-col.css' | asset_url | stylesheet_tag }}
+<div class="custom-image-grid">
+  {% if settings.image_1 %}
+    <div class="grid-item" style="grid-column: {{ settings.image_1_start_column }} / span {{ settings.image_1_span_columns }}">
+      <a href="{{ settings.image_1_link }}">
+        <img src="{{ settings.image_1 | img_url: 'medium' }}" alt="{{ settings.image_1_alt }}" style="width: 100%; height: auto;">
+      </a>
+    </div>
+  {% endif %}
+
+  {% if settings.image_2 %}
+    <div class="grid-item" style="grid-column: {{ settings.image_2_start_column }} / span {{ settings.image_2_span_columns }}">
+      <a href="{{ settings.image_2_link }}">
+        <img src="{{ settings.image_2 | img_url: 'medium' }}" alt="{{ settings.image_2_alt }}" style="width: 100%; height: auto;">
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Image Grid (From Jack)",
+    "class": "section",
+    "tag": "section",
+    "disabled_on": {
+      "groups": ["header", "footer"]
+    },
+    "settings": [
+      {
+        "type": "header",
+        "content": "Grid Settings"
+      },
+      {
+        "type": "image_picker",
+        "label": "Image 1",
+        "id": "image_1",
+        "info": "Upload an image"
+      },
+      {
+        "type": "url",
+        "label": "Image 1 Link",
+        "id": "image_1_link",
+        "default": "#"
+      },
+      {
+        "type": "text",
+        "label": "Image 1 Alt Text",
+        "id": "image_1_alt",
+        "default": "Image 1"
+      },
+      {
+        "type": "range",
+        "label": "Image 1 Start Column",
+        "id": "image_1_start_column",
+        "min": 1,
+        "max": 8,
+        "default": 1,
+        "step": 1
+      },
+      {
+        "type": "range",
+        "label": "Image 1 Span Columns",
+        "id": "image_1_span_columns",
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "label": "Image 2",
+        "id": "image_2",
+        "info": "Upload an image"
+      },
+      {
+        "type": "url",
+        "label": "Image 2 Link",
+        "id": "image_2_link",
+        "default": "#"
+      },
+      {
+        "type": "text",
+        "label": "Image 2 Alt Text",
+        "id": "image_2_alt",
+        "default": "Image 2"
+      },
+      {
+        "type": "range",
+        "label": "Image 2 Start Column",
+        "id": "image_2_start_column",
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "default": 1
+      },
+      {
+        "type": "range",
+        "label": "Image 2 Span Columns",
+        "id": "image_2_span_columns",
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "default": 1
+      }
+    ],
+    "presets": [
+      {
+        "name": "Default",
+        "category": "Custom"
+      }
+    ]
+  }
+  {% endschema %}
+  

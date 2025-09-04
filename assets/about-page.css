@@ -1,0 +1,50 @@
+/* Container wrapping the form */
+#newsletter-form-container {
+  display: flex;
+  flex-direction: row; /* Place input and button on the same line */
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  width: 100%; /* Ensure container spans the full width */
+}
+
+/* Input styling */
+.newsletter-input-wrapper input {
+  flex: 1; /* Allow input to take up available space */
+  border: none;
+  font-size: 1.2rem;
+  font-weight: 400;
+  font-family: inherit; /* Inherit the font from the parent */
+  padding: 0; /* Remove padding */
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
+  outline: none; /* Remove default focus outline */
+}
+
+/* Button styling */
+.newsletter-page-submit {
+  display: inline-flex;
+  font-size: 1.2rem;
+  font-weight: 400;
+  font-family: inherit; /* Match the font with input */
+  text-align: center;
+  text-transform: uppercase;
+  align-items: center; /* Center text vertically */
+  justify-content: center; /* Center text horizontally */
+  background:none;
+  border:none;
+  color: #000; /* Black text */
+  cursor: pointer; /* Pointer cursor for button */
+  text-decoration: none; /* No underline by default */
+  transition: text-decoration 0.3s ease; /* Smooth hover effect */
+}
+
+/* Button hover effect */
+.newsletter-page-submit:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+/* Ensure input and button have minimal spacing */
+.newsletter-input-wrapper,
+.newsletter-submit-wrapper {
+  margin-right: 1rem; /* Small space between input and button */
+}

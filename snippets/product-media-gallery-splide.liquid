@@ -1,0 +1,37 @@
+{%- capture sizes -%}
+  (min-width: 1200px) 1200px, 
+  (min-width: 990px) 90vw, 
+  (min-width: 750px) 95vw, 
+  (min-width: 480px) 90vw, 
+  100vw
+{%- endcapture -%}
+  <section class="splide" aria-label="{{ 'products.product.media.gallery_viewer' | t }}">
+    <div class="splide__track">
+      <ul class="splide__list">
+        {%- assign media_count = product.media.size -%}
+        {%- for media in product.media -%}
+          {%- assign media_position = forloop.index -%}
+          {%- if media.media_type == 'image' -%}
+            <li class="splide__slide">
+              {{
+                media.image
+                | image_url: width: 2000
+                | image_tag:
+                  class: image_class,
+                  loading: lazy,
+                  sizes: sizes,
+                  widths: '2400'
+              }}            
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener( 'DOMContentLoaded', function() {
+      var splide = new Splide( '.splide' );
+      splide.mount();
+    } );
+  </script>

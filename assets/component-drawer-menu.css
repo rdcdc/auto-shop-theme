@@ -1,0 +1,213 @@
+/* Full-Screen Menu Styles */
+.full-screen-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9); /* Lighter background */
+    color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    z-index: 9999; /* Ensure it's above everything else */
+    height: 100vh; /* Full height of the viewport */
+    transform: translateY(-100%); /* Initially hidden */
+    transition: transform 0.3s ease-in-out;
+    overflow: hidden;
+    margin-top: 0px;
+    letter-spacing: 0.06rem;
+}
+  
+.full-screen-menu.hidden {
+    transform: translateY(-100%);
+    visibility: hidden; /* Hide the menu completely */
+}
+
+.full-screen-menu.visible {
+    transform: translateY(0);
+    visibility: visible; /* Make sure the menu is visible */
+}
+  
+.full-screen-menu__close {
+  grid-area: left-icons;
+  display: flex;
+  align-items: center; /* Centers vertically */
+  justify-content: flex-start; /* Pushes to far left */
+  justify-self: start;
+  align-self: end;
+}
+
+.full-screen-menu__header .close-button {
+  color: black;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-family: inherit;
+  padding: 0;
+  margin: 0; /* Remove extra spacing */
+}
+
+.full-screen-menu__close ul {
+  list-style: none; /* Prevent default list styles from affecting layout */
+  padding: 0;
+  margin: 0;
+}
+
+.full-screen-menu__cart {
+  grid-area: icons;
+  display: flex;
+  justify-content: flex-start; /* Pushes to far left */
+  justify-self: end;
+  align-items: center; /* Centers vertically */
+  align-self: end;
+
+}
+
+.full-screen-menu__header .cart-link {
+  color: black;
+  text-decoration: none;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center; /* Centers link text/icon vertically */
+  padding: 0;
+  margin: 0; /* Remove unnecessary spacing */
+}
+
+.full-screen-menu__cart .cart-link-container {
+  display: flex;
+  justify-content: flex-end; /* Aligns the content to the right */
+  align-items: flex-end; /* Aligns the content to the bottom */
+  height: 100%; /* Ensures the container fills its parent */
+}
+
+.overlay-menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 10rem 0 0 0; /* Add some space below the header */
+    text-align: center;
+}
+  
+.overlay-menu-list li {
+    margin: 1rem 0;
+}
+  
+.overlay-menu-list a {
+    color: black;
+    font-size: 1.2rem; /* Ensures consistent font size */
+    text-decoration: none; /* Removes underlines */
+    transition: color 0.2s ease-in-out;
+}
+.overlay-menu-list a:hover {
+    text-decoration: underline;
+    text-decoration-color: #000;
+}
+.overlay-menu-spacing {
+    margin-top: 2rem; /* Adjust as needed to create the desired space */
+    margin-bottom: 2rem; /* Creates additional space below */
+  }
+  
+.full-screen-menu__header {
+    display: grid;
+    grid-template-areas: 'left-icons heading icons';
+    grid-template-columns: minmax(40px, auto) 1fr minmax(40px, auto);
+    align-items: center;
+    z-index: 1000;
+    position: fixed;
+    width: 100%;
+    top: 10px;
+    background-color: #ffffffe6;
+    padding-top: 13px;
+    padding-bottom: 6px;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+    height: auto;
+    letter-spacing: 0.06rem;
+}
+
+.full-screen-menu__logo {
+  grid-area: heading;
+  display: flex;
+  justify-content: center;
+  justify-self: center;
+  align-items: center; /* Centers the logo vertically */
+  align-self: end;
+}
+
+.menu-logo {
+  max-height: 50px; /* Ensure it fits within the header */
+  height: auto;
+}
+
+.full-screen-menu__logo img {
+  margin: 0 auto;
+  position: relative;
+  bottom: 1px;
+  left: -2px;
+}
+  
+
+
+
+  .menu-logo-text {
+    font-size: 1.2rem;
+    color: black;
+    text-transform: uppercase;
+  }
+  
+  body.overlay-active .product__column-sticky {
+    position: static; /* Remove sticky behavior */
+ }
+
+.overlay-menu .menu-container {
+  max-width: var(--site-container-width); /* Match your main grid's width */
+  margin: 0 auto; /* Center-align */
+  padding: 0 var(--site-padding); /* Match site padding */
+}
+
+.overlay__menu-item {
+  padding-top: 1.2rem;
+  text-decoration: none;
+  align-items: center;
+  color: rgb(var(--color-foreground));
+}
+
+.full-screen-menu__close,
+.full-screen-menu__logo,
+.full-screen-menu__cart {
+    margin: 0; /* No extra spacing */
+    padding: 0; /* No unnecessary padding */
+}
+
+.full-screen-menu__header .close-button,
+.full-screen-menu__header .cart-link {
+    padding: 0;
+    margin: 0;
+}
+
+.full-screen-menu__trigger .header__menu-item {
+  padding-left: 0;
+  padding-top: 1.2rem;
+  text-decoration: none;
+  align-items: center;
+  color: rgb(var(--color-foreground));
+}
+
+.menu-navigation ul {
+  text-align:left;
+}
+
+#close-menu {
+  position: relative;
+  top: 1px; /* This moves the element 2px down */
+}
+
+#cart-menu {
+  position: relative;
+  top: 0px; /* This moves the element 2px down */
+}
+
+.full-screen-menu__cart button {
+  letter-spacing: 0.06rem !important; /* Adjust letter spacing */
+}

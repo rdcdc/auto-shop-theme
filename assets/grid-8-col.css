@@ -1,0 +1,11 @@
+.custom-image-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr); /* 8 equal columns */
+    gap: 20px; /* Adjust space between items */
+  }
+  
+  .custom-image-grid .grid-item {
+    position: relative;
+    overflow: hidden;
+  }
+  

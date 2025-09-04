@@ -1,0 +1,13 @@
+{% assign current_url = request.path %}
+{{ product_passed.handle }}
+{{ current_url }}
+{% if current_url contains '/products/' %}
+  {% assign current_product_handle = current_url | remove: '/products/' %}
+  {% if current_product_handle == product_passed.handle %}
+    {% assign is_current_product = true %}
+  {% else %}
+    {% assign is_current_product = false %}
+  {% endif %}
+{% else %}
+  {% assign is_current_product = false %}
+{% endif %}

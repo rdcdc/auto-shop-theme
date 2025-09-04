@@ -1,0 +1,179 @@
+{{ 'section-main-page.css' | asset_url | stylesheet_tag }}
+{{ 'about-page.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="page-width page-width--narrow section-{{ section.id }}-padding">
+  <div class="about-page">
+    <div class="rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      {{ page.content }}
+    </div>
+    <div class="about-page-spacing">&nbsp;</div>
+    <div id="newsletter-page-container">
+      <div id="newsletter-form-container">
+        <div class="newsletter-input-wrapper">
+          <input
+            type="email"
+            id="newsletter-page-email"
+            placeholder="EMAIL"
+            class="newsletter-page-input"
+            required
+          />
+        </div>
+        <div class="newsletter-submit-wrapper">
+          <button
+            type="button"
+            id="newsletter-page-submit"
+            class="newsletter-page-submit"
+          >
+            SUBSCRIBE
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="about-page-spacing">&nbsp;</div>
+    <div class="about-image-container">
+      <img id="about-page-image" src="{{ 'auto-00000001.jpeg' | asset_url }}" alt="Image" class="about-image" />
+    </div>
+  </div>
+</div>
+<script src="{{ 'about-page-image.js' | asset_url }}"></script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  const formContainer = document.getElementById('newsletter-form-container');
+  const submitButton = document.getElementById('newsletter-page-submit');
+
+  // Function to display user-friendly error messages
+  function showErrorMessage(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'newsletter-error';
+    errorDiv.style.cssText = 'color: #d32f2f; font-size: 14px; margin-top: 10px; padding: 10px; border: 1px solid #d32f2f; border-radius: 4px; background: #ffeaea;';
+    errorDiv.textContent = message;
+    
+    // Remove any existing error messages
+    const existingError = formContainer.querySelector('.newsletter-error');
+    if (existingError) {
+      existingError.remove();
+    }
+    
+    // Add the new error message
+    formContainer.appendChild(errorDiv);
+    
+    // Remove error message after 5 seconds
+    setTimeout(() => {
+      if (errorDiv.parentNode) {
+        errorDiv.remove();
+      }
+    }, 5000);
+  }
+
+  // Add submit event listener
+  submitButton.addEventListener('click', function (event) {
+    event.preventDefault();
+
+    const emailInput = document.getElementById('newsletter-page-email');
+    const email = emailInput.value.trim();
+
+    if (!email) {
+      showErrorMessage('Please enter a valid email address.');
+      return;
+    }
+
+    // Klaviyo API key and list ID
+    const apiKey = 'Yr6QUs'; // Your actual Public API Key
+    const listId = 'R6J4e6'; // Your List ID
+
+    const data = {
+      data: {
+        type: "subscription",
+        attributes: {
+          profile: {
+            data: {
+              type: "profile",
+              attributes: {
+                email: email
+              }
+            }
+          }
+        },
+        relationships: {
+          list: {
+            data: {
+              type: "list",
+              id: listId
+            }
+          }
+        }
+      }
+    };
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'revision': '2023-07-15'
+      },
+      body: JSON.stringify(data)
+    };
+
+    // Send request to Klaviyo
+    fetch(`https://a.klaviyo.com/client/subscriptions/?company_id=${apiKey}`, options)
+      .then(async (res) => {
+        if (res.status === 202) {
+          // Replace the form content with a success message
+          formContainer.innerHTML = `<div id="newsletter-success-message">Thank you for subscribing</div>`;
+        } else {
+          showErrorMessage('Subscription failed. Please try again.');
+        }
+      })
+      .catch(err => {
+        showErrorMessage('There was an issue with your subscription. Please try again.');
+      });
+  });
+});
+</script>
+{% schema %}
+{
+  "name": "t:sections.main-page.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

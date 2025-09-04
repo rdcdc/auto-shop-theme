@@ -1,0 +1,27 @@
+{% comment %}
+  Renders the swatches for a set of items in a given menu.
+  Accepts:
+  - menu: menu name
+
+  Usage:
+  {% render 'navigation-swatch', menu-handle: menu %}
+{% endcomment %}
+<ul>
+  {% for link in menu-handle.links %}
+    <li>
+      <a href="{{ link.url }}">{{ link.title }}</a>
+
+      {% if link.type == 'product' %}
+        {% assign product = link.object %}
+
+        {% render 'product-variant-options',
+            product: product,
+            option: option,
+            block: block,
+            picker_type: 'swatch'
+        %}
+      {% endif %}
+
+    </li>
+  {% endfor %}
+</ul>

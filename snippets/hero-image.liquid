@@ -1,0 +1,59 @@
+<div class="hero-images full-bleed desktop-hero">
+  <div class="hero-image">
+    <a href="{{ link1 | default: '#' }}" class="hero-link">
+      <img
+        src="{{ image1 | file_img_url: '3000x3000' }}"
+        alt="{{ alt_text1 | default: 'Hero image 1' }}"
+        class="hero-image__img hero-image__desktop" />
+      {% if image_mobile1 %}
+        <img
+          src="{{ image_mobile1 | file_img_url: '3000x3000' }}"
+          alt="{{ alt_text1 | default: 'Hero image 1 (mobile)' }}"
+          class="hero-image__img hero-image__mobile" />
+      {% endif %}
+    </a>
+  </div>
+
+  {% if image2 %}
+    <div class="hero-image">
+      <a href="{{ link2 | default: '#' }}" class="hero-link">
+        <img
+          src="{{ image2 | file_img_url: '3000x3000' }}"
+          alt="{{ alt_text2 | default: 'Hero image 2' }}"
+          class="hero-image__img" />
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+
+
+
+<script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@type": "WebPage",
+      "url": "{{ shop.url }}",
+      "name": "Home",
+      "description": "{{ shop.description | strip_html | truncate: 160 }}",
+      "publisher": {
+        "@type": "Organization",
+        "name": "{{ shop.name }}",
+        "url": "{{ shop.url }}",
+        "logo": "{{ settings.logo | image_url: width: 500 }}"
+      },
+      "image": "{{ image1 | file_img_url: '3000x3000' | prepend: "https:" }}",
+      "mainEntityOfPage": "{{ shop.url }}",
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "{{ shop.url }}"
+          }
+        ]
+      }
+    }
+  </script>

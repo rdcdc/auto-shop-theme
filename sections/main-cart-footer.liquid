@@ -1,0 +1,151 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-totals.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{% assign today = 'now' | date: '%s' %}
+{% assign has_preorder = false %}
+
+{% for item in cart.items %}
+  {% assign preorder_date = item.product.metafields.custom.preorder_date | date: '%s' %}
+  {% if preorder_date and preorder_date > today %}
+    {% assign has_preorder = true %}
+    {% assign preorder_month = preorder_date | date: '%B' %}
+  {% endif %}
+{% endfor %}
+
+<div
+  class="gradient color-{{ section.settings.color_scheme }}{% if cart == empty %} is-empty{% endif %}"
+  id="main-cart-footer"
+  data-id="{{ section.id }}"
+>
+  <div class="cart-grid--8-col">
+    <div class="cart__column cart__column--footer-right">
+      <div class="cart__footer section-{{ section.id }}-padding">
+
+        <div class="cart-summary__grid">
+          <div class="cart-summary__row order-total">
+            <p><strong class="caps">{{ 'sections.cart.order_total' | t }}</strong></p>
+            <p><strong class="" id="cart-total-live">{{ cart.total_price | money_without_trailing_zeros }}</strong></p>
+          </div>
+          <div class="cart-summary__row">
+            <p>{%- if cart.duties_included and cart.taxes_included -%}
+                      {%- if shop.shipping_policy.body == blank -%}
+                        {{ 'sections.cart.duties_and_taxes_included_shipping_at_checkout_without_policy' | t }}
+                      {%- else -%}
+                        {{
+                          'sections.cart.duties_and_taxes_included_shipping_at_checkout_with_policy_html'
+                          | t: link: shop.shipping_policy.url
+                        }}
+                      {%- endif -%}
+                    {%- elsif cart.duties_included == false and cart.taxes_included -%}
+                      {%- if shop.shipping_policy.body == blank -%}
+                        {{ 'sections.cart.taxes_included_shipping_at_checkout_without_policy' | t }}
+                      {%- else -%}
+                        {{
+                          'sections.cart.taxes_included_shipping_at_checkout_with_policy_html'
+                          | t: link: shop.shipping_policy.url
+                        }}
+                      {%- endif -%}
+                    {%- elsif cart.duties_included and cart.taxes_included == false -%}
+                      {%- if shop.shipping_policy.body == blank -%}
+                        {{ 'sections.cart.duties_included_taxes_at_checkout_shipping_at_checkout_without_policy' | t }}
+                      {%- else -%}
+                        {{
+                          'sections.cart.duties_included_taxes_at_checkout_shipping_at_checkout_with_policy_html'
+                          | t: link: shop.shipping_policy.url
+                        }}
+                      {%- endif -%}
+                    {%- elsif cart.duties_included == false and cart.taxes_included == false -%}
+                      {%- if shop.shipping_policy.body == blank -%}
+                        {%- if has_preorder -%}
+                          <i>Preorders will ship in {{ preorder_month }}</i><br /><br />
+                        {%- endif -%}
+                        Manhattan pick up option available at checkout<br /><br />
+                        {{ 'sections.cart.taxes_at_checkout_shipping_at_checkout_without_policy' | t }}
+                      {%- else -%}
+                        {{
+                          'sections.cart.taxes_at_checkout_shipping_at_checkout_with_policy_html'
+                          | t: link: shop.shipping_policy.url
+                        }}
+                      {%- endif -%}
+                    {%- endif -%}
+
+                  </p>
+          </div>
+          <div class="cart-summary__row">
+            <button form="cart" id="checkout" type="submit" name="checkout" class="cart__checkout-button button button-wrapper caps" {% if cart == empty %}disabled{% endif %}>
+              {{ 'sections.cart.checkout' | t }}
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-footer.name",
+  "class": "cart__footer-wrapper",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "subtotal",
+      "name": "t:sections.main-cart-footer.blocks.subtotal.name",
+      "limit": 1
+    },
+    {
+      "type": "buttons",
+      "name": "t:sections.main-cart-footer.blocks.buttons.name",
+      "limit": 1
+    },
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

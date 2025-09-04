@@ -1,0 +1,103 @@
+{% comment %}
+  Renders a header drawer menu for mobile and desktop, with a mega-menu style for the first top-level item only.
+
+  Usage:
+  {% render 'header-drawer' %}
+{% endcomment %}
+{{ 'component-drawer-menu.css' | asset_url | stylesheet_tag }}
+
+  <nav class="menu-navigation">
+    <ul class="menu-list list-menu" role="list">
+      {%- assign first_link = section.settings.menu.links.first -%}
+      {%- if first_link -%}
+        <li class="full-screen-menu__trigger">
+          <button id="open-menu" class="header__menu-item menu-item list-menu__item link focus-inset">
+            {{ first_link.title | escape }}
+          </button>
+        </li>
+      {%- endif -%}
+    </ul>
+  </nav>
+
+  <!-- Full-Screen Overlay Menu -->
+  <div id="overlay-menu" class="full-screen-menu hidden">
+    <div class="header-overlay-space">&nbsp;</div>
+    <div class="full-screen-menu__header">
+      <div class="full-screen-menu__close menu-navigation">
+        <ul class="menu-list list-menu">
+          <li>
+            <button id="close-menu" class="close-button menu-item list-menu__item link focus-inset overlay__menu-item">
+              Close
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div class="full-screen-menu__logo">
+        <a href="{{ routes.root_url }}" class="full-screen-menu__logo link link--text focus-inset">
+          {%- if settings.logo != blank -%}
+            {% capture logo_alt %}{{ settings.logo.alt | default: shop.name | escape }}{% endcapture %} 
+              {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+              {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
+              {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
+              {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
+              {{ settings.logo | image_url: width: 600 | image_tag:
+                class: 'header__heading-logo motion-reduce',
+                widths: widths,
+                height: logo_height,
+                width: settings.logo_width,
+                alt: logo_alt,
+                sizes: sizes,
+                preload: true
+              }}            
+          {%- else -%}
+            <span class="menu-logo-text">{{ shop.name }}</span>
+          {%- endif -%}
+        </a>        
+      </div>
+      <div class="full-screen-menu__cart  menu-navigation">
+        <ul class="menu-list list-menu">
+          <li>         
+            <button 
+              id="cart-menu" 
+              class="close-button menu-item list-menu__item link focus-inset overlay__menu-item" 
+              onclick="window.location.href='{{ routes.cart_url }}'">
+              {% if cart == empty %}
+                Cart
+              {% else %}
+                Cart {{ cart.item_count }}
+              {% endif %}
+            </button>
+          </li>
+        </ul>        
+      </div>
+    </div>
+    <ul class="overlay-menu-list" role="list">
+      {%- for childlink in first_link.links -%}
+        <li>
+          <a
+            href="{{ childlink.url }}"
+            class="menu-item link focus-inset{% if childlink.current %} active{% endif %}"
+            {% if childlink.current %}aria-current="page"{% endif %}
+          >
+            {{ childlink.title | escape }}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+    <div class="overlay-menu-spacing">&nbsp;</div>
+    <ul class="overlay-menu-list" role="list">
+      <li>
+        <a href="/pages/about" class="menu-item link focus-inset">
+          <img 
+            src="{{ 'cropped-ant-logo.png' | asset_url }}" 
+            alt="About" 
+            width="16" 
+            style="height: auto; display: inline-block; vertical-align: middle;" 
+          />
+        </a>
+      </li>
+      <li>
+        <a href="{{ pages.policies.url }}">{{ pages.policies.title }}</a>
+      </li>
+    </ul>
+  </div>

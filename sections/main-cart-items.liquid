@@ -1,0 +1,445 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-cart-items.css' | asset_url | stylesheet_tag }}
+{{ 'component-totals.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+{{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- unless settings.cart_type == 'drawer' -%}
+  <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
+{%- endunless -%}
+
+<script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+
+<cart-items
+  class="gradient color-{{ section.settings.color_scheme }} isolate{% if cart == empty %} is-empty{% else %} section-{{ section.id }}-padding{% endif %}" data-id="{{ section.id }}">
+  <div class="cart-grid--8-col">
+    <!-- Empty Cart Section -->
+    {% if cart == empty %}
+      <div class="cart__warnings">
+        <form action="{{ routes.all_products_collection_url }}" method="get">
+          <button type="submit" class="button button-wrapper button-wrapper-mobile caps">YOUR CART IS EMPTY</button>
+        </form>
+      </div>
+    {% else %}
+      <div class="cart__column cart__column--left">
+        <!-- Cart Form -->
+        <form action="{{ routes.cart_url }}" class="cart__contents critical-hidden" method="post" id="cart">
+          <div class="cart__items" id="main-cart-items" data-id="{{ section.id }}">
+
+            <!-- Cart Items -->
+            {% for item in cart.items %}
+
+            {% assign today = 'now' | date: '%s' %}
+            {% assign is_preorder = false %}
+
+            {% assign preorder_date = item.product.metafields.custom.preorder_date | date: '%s' %}
+            {% if preorder_date and preorder_date > today %}
+              {% assign is_preorder = true %}
+            {% endif %}
+              <div class="cart-grid__item cart-item" data-variant-id="{{ item.variant.id }}">
+                <!-- Product Media (Image) -->
+                <div class="cart-item__media">
+                  {% if item.image %}
+                    <a href="{{ item.url | split: '?' | first }}" class="cart-item__link" aria-hidden="true" tabindex="-1"></a>
+                    <div class="cart-item__image-container gradient global-media-settings">
+                      <img
+                        src="{{ item.image | image_url: width: 2000 }}"
+                        class="cart-item__image"
+                        alt="{{ item.image.alt | escape }}">
+                    </div>
+                  {% endif %}
+                </div>
+
+                <!-- Product Details -->
+                <div class="cart-item__details">
+                  <ul class="list-unstyled">
+                    <li><a href="{{ item.url | split: '?' | first }}" class="cart-item__name break link">{{ item.product.title | escape }}</a></li>
+                    <li class="cart-item__price-mobile">
+                      <span class="cart-item__price-mobile-only">{{ item.price | money_without_trailing_zeros }}</span>
+                    </li>
+                    {%- if is_preorder -%}
+                    <li>
+                      <i>Preorder</i>
+                    </li>
+                    {%- endif -%}
+                    <li>
+                      <cart-remove-button
+                        id="Remove-{{ item.index | plus: 1 }}"
+                        data-index="{{ item.index | plus: 1 }}">
+                        <a href="{{ item.url_to_remove }}" class="cart-item__link remove link quantity-remove"
+                          aria-label="{{ 'sections.cart.remove_title' | t: title: item.title | escape }}">
+                          REMOVE
+                        </a>
+                      </cart-remove-button>
+                    </li>
+                  </ul>
+
+                  <!-- Discounted Prices -->
+                  {% if item.original_line_price != item.final_line_price %}
+                    <dl class="cart-item__discounted-prices">
+                      <dt class="visually-hidden">
+                        {{ 'products.product.price.regular_price' | t }}
+                      </dt>
+                      <dd>
+                        <s class="cart-item__old-price price price--end">
+                          {{ item.original_line_price | money_without_trailing_zeros }}
+                        </s>
+                      </dd>
+                      <dt class="visually-hidden">
+                        {{ 'products.product.price.sale_price' | t }}
+                      </dt>
+                      <dd class="price price--end">
+                        {{ item.final_line_price | money_without_trailing_zeros }}
+                      </dd>
+                    </dl>
+                  {% endif %}
+                  <div class="cart-item__actions">
+
+                    <label class="visually-hidden" for="Quantity-{{ item.index | plus: 1 }}">
+                      {{ 'products.product.quantity.label' | t }}
+                    </label>
+
+                  </div>
+                </div>
+
+                <!-- Product Quantity -->
+                <div class="cart-item__quantity" aria-live="polite" data-variant-id="{{ item.variant.id }}">
+                  <ul class="list-unstyled cart-item__quantity-grid">
+                    <li class="qty-label" aria-hidden="true">QTY</li> <!-- This is purely visual; screen readers should skip it -->
+                    <li class="qty-dropdown">
+                      <!-- Decrease quantity button -->
+                      <a href="/cart"
+                        role="button"
+                        aria-label="Decrease quantity by 1"
+                        aria-live="assertive"
+                        tabindex="0"
+                        class="quantity-decrease">
+                        −
+                      </a>
+                      <!-- Display the quantity -->
+                      <span aria-live="polite" class="cart-live-quantity" data-variant-id="{{ item.variant.id }}">{{ item.quantity }}</span>
+                      <!-- Increase quantity button -->
+                      <a href="/cart"
+                        role="button"
+                        aria-label="Increase quantity by 1"
+                        aria-live="assertive"
+                        tabindex="0"
+                        class="quantity-increase">
+                        +
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Product Total -->
+                <div class="cart-item__total" data-variant-id="{{ item.variant.id }}">
+                  <span>{{ item.line_price | money_without_trailing_zeros }}</span> <!-- Show line price total -->
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</cart-items>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Function to display user-friendly cart error messages
+    function showCartErrorMessage(message) {
+        const existingError = document.querySelector('.cart-error-message');
+        if (existingError) {
+            existingError.remove();
+        }
+        
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'cart-error-message';
+        errorDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #d32f2f; color: white; padding: 12px 16px; border-radius: 4px; font-size: 14px; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.2);';
+        errorDiv.textContent = message;
+        
+        document.body.appendChild(errorDiv);
+        
+        // Remove error message after 4 seconds
+        setTimeout(() => {
+            if (errorDiv.parentNode) {
+                errorDiv.remove();
+            }
+        }, 4000);
+    }
+
+    function handleQuantityChange(event) {
+        event.preventDefault(); // Prevent default behavior
+        const variantId = this.closest('.cart-item__quantity').dataset.variantId;
+        const quantityElement = document.querySelector(`.cart-live-quantity[data-variant-id="${variantId}"]`);
+        let quantity = parseInt(quantityElement.textContent, 10);
+
+        if (this.classList.contains('quantity-decrease')) {
+            if (quantity > 1) {
+                Shopify.removeItem(variantId, quantity); // Decrement normally
+            } else {
+                // If quantity is 1, remove the item entirely
+                Shopify.removeItem(variantId, 0); // Setting quantity to 0 removes the item
+                // Optionally hide or remove the item row
+                const cartItemRow = this.closest('.cart-item');
+                if (cartItemRow) cartItemRow.style.display = 'none';
+            }
+        } else if (this.classList.contains('quantity-increase')) {
+            Shopify.addItem(variantId, quantity); // Increment quantity
+        }
+    }
+
+    function handleQuantityRemove(event) {
+        event.preventDefault(); // Prevent default behavior
+        const cartItem = this.closest('.cart-item');
+        const variantId = this.dataset.variantId || cartItem?.dataset.variantId;
+
+        if (!variantId) {
+            showCartErrorMessage('Unable to update item. Please refresh the page and try again.');
+            return; // Exit if no variant ID is found
+        }
+
+        Shopify.removeItem(variantId, 0); // Set quantity to 0 to remove the item
+        if (cartItem) {
+            cartItem.style.display = 'none'; // Optionally hide or remove the item row
+        }
+    }
+
+    // Attach listeners for click and touchend events
+    document.querySelectorAll('.quantity-decrease, .quantity-increase').forEach(function (button) {
+        button.addEventListener('click', handleQuantityChange);
+        button.addEventListener('touchend', handleQuantityChange); // Add touch support
+    });
+    document.querySelectorAll('.quantity-remove').forEach(function (button) {
+        button.addEventListener('click', handleQuantityRemove);
+        button.addEventListener('touchend', handleQuantityRemove); // Add touch support
+    });
+});
+
+
+Shopify.addItem = async function(id, quantity) {
+  // Prevent the default link behavior (page reload)
+  event.preventDefault();
+
+    await $.ajax({
+        method: 'POST',
+        url: '/cart/change.js',
+        data: {
+            id: id,
+            quantity: quantity + 1  // Increment quantity by 1
+        },
+        dataType: 'json'
+    }).done(function(response) {
+        // Fetch updated cart data
+        $.getJSON('/cart.js', function(cart) {
+            // Update the cart UI here
+            updateCartQuantity(id, cart.items.find(item => item.variant_id == id).quantity);
+            updateCartLineTotal(id, cart.items.find(item => item.variant_id == id).line_price);
+            updateCartTotal(cart.total_price);
+            const cartCount = cart.item_count;
+            const cartLink = document.querySelector('#cart-link');
+            if (cartLink) {
+              // Update the cart link text to reflect the updated cart count
+              if (cartCount > 0) {
+                cartLink.textContent = `Cart ${cartCount}`;
+              }
+              else {
+                cartLink.textContent = `Cart`;
+              }
+            }
+        });
+    }).fail(function(error) {
+        showCartErrorMessage('Unable to update cart. Please try again.');
+    });
+};
+
+Shopify.removeItem = async function (id, quantity) {
+    // Prevent the default link behavior (page reload)
+    event.preventDefault();
+
+    if (quantity === 0) {
+        await $.ajax({
+            method: 'POST',
+            url: '/cart/change.js',
+            data: {
+                id: id,
+                quantity: 0 // Setting quantity to 0 removes the item
+            },
+            dataType: 'json'
+        }).done(function (response) {
+            // Remove the item's DOM row
+            if (response.item_count === 0) {
+              // If the cart is empty, reload the page
+              location.reload();
+            }
+            else {
+              const cartItemRow = document.querySelector(`.cart-grid__item[data-variant-id="${id}"]`);
+              if (cartItemRow) {
+                cartItemRow.style.display = 'none'; // Optionally: cartItemRow.remove();
+              }
+            }
+
+            // Update cart total
+            updateCartTotal(response.total_price);
+
+        }).fail(function (error) {
+            showCartErrorMessage('Unable to remove item. Please try again.');
+        });
+    } else {
+        // Otherwise, decrement the quantity
+        await $.ajax({
+            method: 'POST',
+            url: '/cart/change.js',
+            data: {
+                id: id,
+                quantity: quantity - 1 // Decrement quantity by 1
+            },
+            dataType: 'json'
+        }).done(function (response) {
+            // Fetch updated cart data
+            $.getJSON('/cart.js', function (cart) {
+                const item = cart.items.find(item => item.variant_id == id);
+                if (item) {
+                    // Dynamically update the quantity, line total, and cart total on the page
+                    updateCartQuantity(id, item.quantity);
+                    updateCartLineTotal(id, item.line_price);
+                }
+                updateCartTotal(cart.total_price);
+                const cartCount = cart.item_count;
+                const cartLink = document.querySelector('#cart-link');
+                if (cartLink) {
+                  // Update the cart link text to reflect the updated cart count
+                  if (cartCount > 0) {
+                    cartLink.textContent = `Cart ${cartCount}`;
+                  }
+                  else {
+                    cartLink.textContent = `Cart`;
+                  }
+                }
+            });
+        }).fail(function (error) {
+            showCartErrorMessage('Unable to update cart. Please try again.');
+        });
+    }
+};
+
+// Function to update the displayed cart quantity dynamically
+function updateCartQuantity(id, newQuantity) {
+
+    // Find the element that holds the quantity for this item
+    var quantityElement = document.querySelector(`.cart-item__quantity[data-variant-id="${id}"] .cart-live-quantity`);
+
+    if (quantityElement) {
+        // Update the displayed quantity
+        quantityElement.textContent = newQuantity;
+    } else {
+        showCartErrorMessage('Unable to update quantity display.');
+    }
+}
+
+// Function to update the line total for a specific item in the cart
+function updateCartLineTotal(id, newLineTotal) {
+    // Find the element that holds the line total for this item
+    var lineTotalElement = document.querySelector(`.cart-item__total[data-variant-id="${id}"] span`);
+
+    if (lineTotalElement) {
+        // Update the displayed line total
+        lineTotalElement.textContent = formatMoney(newLineTotal);
+    } else {
+        showCartErrorMessage('Unable to update item total.');
+    }
+}
+
+function formatMoney(cents) {
+  // Example: Format money as $10.00
+  var price = (cents / 100).toFixed(2);
+  if (price.endsWith('.00')) {
+    price = price.slice(0, -3);
+  }
+  return '$' + price;
+}
+
+// Then use this function instead of Shopify.formatMoney
+function updateCartTotal(newTotalPrice) {
+    // Find the element that holds the total price in the cart summary
+    var cartTotalElement = document.querySelector('#cart-total-live');
+
+    if (cartTotalElement) {
+        // Update the displayed cart total
+        cartTotalElement.textContent = formatMoney(newTotalPrice);
+    } else {
+        showCartErrorMessage('Unable to update cart total.');
+    }
+}
+function refreshCartItems() {
+    // Fetch the updated section using the Shopify section rendering API
+    $.ajax({
+        url: '/cart?sections=cart-items',
+        method: 'GET',
+        success: function (data) {
+            // Replace the HTML of the cart-items section with the updated content
+            const updatedCartHTML = data['cart-items'];
+            const cartItemsContainer = document.querySelector('[data-id="cart-items"]');
+            if (cartItemsContainer) {
+                cartItemsContainer.innerHTML = updatedCartHTML;
+            }
+        },
+        error: function (error) {
+            showCartErrorMessage('Unable to refresh cart. Please reload the page.');
+        }
+    });
+}
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-items.name",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

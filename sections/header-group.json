@@ -1,0 +1,64 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "announcement_bar_xbPbAC": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement_gMwTgK": {
+          "type": "announcement",
+          "settings": {
+            "text": "To receive your order before Christmas: NYC customers — please place orders by 12/15 for 12/16 pick upAll other customers — please place orders by end of day 12/11",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "announcement_gMwTgK"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "inverse",
+        "show_line_separator": false,
+        "show_social": false,
+        "auto_rotate": false,
+        "change_slides_speed": 5,
+        "enable_country_selector": false,
+        "enable_language_selector": false
+      }
+    },
+    "header": {
+      "type": "header",
+      "custom_css": [],
+      "settings": {
+        "logo_position": "middle-center",
+        "menu": "main-menu",
+        "menu_type_desktop": "mega",
+        "sticky_header_type": "always",
+        "show_line_separator": false,
+        "color_scheme": "background-1",
+        "menu_color_scheme": "background-2",
+        "enable_country_selector": false,
+        "enable_language_selector": false,
+        "enable_customer_avatar": false,
+        "mobile_logo_position": "center",
+        "margin_bottom": 12,
+        "padding_top": 12,
+        "padding_bottom": 12
+      }
+    }
+  },
+  "order": [
+    "announcement_bar_xbPbAC",
+    "header"
+  ]
+}
